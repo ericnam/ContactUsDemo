@@ -1,0 +1,89 @@
+﻿@model Contact
+@{
+    ViewBag.Title = "Contact Us";
+    Layout = "~/Views/Shared/_layout.cshtml";
+}
+@Scripts.Render("~/bundles/js")
+
+<div class="info">
+    <span>
+        <div class="content">
+            <h1>Let's Chat!</h1>
+            <p>
+                Feel free to schedule a time to talk with us! We welcome all types of questions and would love to discuss them with you.
+                Our business hours are listed below, and anytime within that time range in 15 minute increments will work fine with us.
+                Leave your first and last name, email, phone number, and best time for you to talk, and we'll get back to you shortly.
+            </p>
+            <p>
+                Looking forward to speaking with you!
+            </p>
+            <span class="spec">
+                <h3>
+                    <i class="fas fa-map-marker-alt"></i>
+                    Dallas, TX
+                </h3>
+                <h3>
+                    <i class="fas fa-clock"></i>
+                    9:00am - 6:00pm
+                </h3>
+            </span>
+        </div>
+    </span>
+</div>
+<div class="form">
+    <span>
+        <div class="disclaimer">
+            @{
+                if (ViewData["Disclaimers"] != null && ((Dictionary<String, String>)ViewData["Disclaimers"]).Count() > 0)
+                {
+                    Dictionary<String, String> disclaimers = (Dictionary<String, String>)ViewData["Disclaimers"];
+                    foreach (KeyValuePair<String, String> kvp in disclaimers)
+                    {
+                        <div class="message @kvp.Key">
+                            <p>@kvp.Value</p>
+                        </div>
+                    }
+                }
+            }
+            @{if (ViewData["ValidationErrors"] != null && ((Dictionary<String, List<String>>)ViewData["ValidationErrors"]).Count() > 0)
+              {
+                    <div class="message warning">
+                    <p>
+                    @{
+                        Dictionary<String, List<String>> validationErrors = (Dictionary<String, List<String>>)ViewData["ValidationErrors"];
+                        foreach (KeyValuePair<String, List<String>> kvp2 in validationErrors)
+                        {
+                            @kvp2.Value.FirstOrDefault()
+                            <br />
+                        }
+                    }
+                    </p>
+                </div>
+              }
+                
+            }
+        </div>
+        <div class="content">
+            @using (Html.BeginForm("Index", "ContactUs", FormMethod.Post))
+            {
+                @Html.TextBox("FirstName", Model.FirstName, new { @class = "col-50 ", placeholder = "First Name" })
+                @Html.TextBox("LastName", Model.LastName, new { @class = "col-50 ", placeholder = "Last Name", style = "float:right" })
+                @Html.TextBox("EmailAddress", Model.EmailAddress, new { @class = "col-100 ", placeholder = "Email", type = "email" })
+                @Html.TextBox("Telephone", Model.Telephone, new { @class = "col-100 ", placeholder = "Phone Number" })
+
+                <label id="time_label" class="col-50">Time:</label>
+                <div id="time">
+                    @Html.TextBox("Hour", Model.BestTimeToCall.Value.ToString("hh"), new { maxlength = "2" })    
+                    <label style="float: left">:</label>
+                    @Html.TextBox("Minute", Model.BestTimeToCall.Value.ToString("mm"), new { maxlength = "2" })
+                    @Html.TextBox("Meridiem", Model.BestTimeToCall.Value.ToString("tt"), new { @readonly = "true" })
+                </div>
+
+                <div class="g-recaptcha" data-sitekey="6LcsgWoUAAAAAAGN7ynvqls2GW9qzIwy_CBLtci6"></div>
+
+                <button id="submit" type="submit" value="Submit">SUBMIT</button>
+                @Html.AntiForgeryToken()
+            }
+        </div>
+    </span>
+</div>
